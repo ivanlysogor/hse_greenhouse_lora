@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import json
 import redis
-from mosquitto import Mosquitto
+
 
 publish_key   = "pub-c-2272ef16-05d2-4cfb-927a-7a7c4232145b"
 subscribe_key = "sub-c-b4c7721e-2229-11e7-bd07-02ee2ddab7fe"
@@ -11,7 +11,7 @@ client_uuid   = "1ddb86ef5"
 mqtt_hostname = "mqtt.pubnub.com"
 mqtt_connect  = publish_key + "/" + subscribe_key + "/" + client_uuid
 mqtt_topic    = publish_key + "/" + subscribe_key + "/" + channel_name
-mosq_object   = Mosquitto(mqtt_connect)
+mosq_object   = mqtt(mqtt_connect)
 
 mosq_object.connect(mqtt_hostname)
 
