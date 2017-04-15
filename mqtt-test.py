@@ -13,8 +13,6 @@ pnconfig.ssl = False
 pubnub = PubNub(pnconfig)
 
 def publish_callback(result, status):
-    print result
-    print status
     pass
     # Handle PNPublishResult and PNStatus
 
@@ -31,7 +29,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
     r.append(msg.topic,str(msg.payload)+'/')
-    pubnub.publish().channel(msg.topic).message(str(msg.payload)).async(publish_callback)
+    pubnub.publish().channel("TEST").message("TEST").async(publish_callback)
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
