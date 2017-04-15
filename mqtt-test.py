@@ -11,10 +11,6 @@ client_uuid   = "1ddb86ef5"
 mqtt_hostname = "mqtt.pubnub.com"
 mqtt_connect  = publish_key + "/" + subscribe_key + "/" + client_uuid
 mqtt_topic    = publish_key + "/" + subscribe_key + "/" + channel_name
-mosq_object   = mqtt(mqtt_connect)
-
-mosq_object.connect(mqtt_hostname)
-
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
