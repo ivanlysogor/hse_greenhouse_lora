@@ -28,4 +28,4 @@ client.connect("localhost", 1883, 60)
 # handles reconnecting.
 # Other loop*() functions are available that give a threaded interface and a
 # manual interface.
-client.loop_forever()mqtt-test.py
+client.loop_forever()
