@@ -13,6 +13,8 @@ pnconfig.ssl = False
 pubnub = PubNub(pnconfig)
 
 def publish_callback(result, status):
+    print "status.is_error", status.is_error()
+    print "status.original_response", status.original_response
     pass
     # Handle PNPublishResult and PNStatus
 
