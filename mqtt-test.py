@@ -32,7 +32,7 @@ def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
     r.append(msg.topic,str(msg.payload)+'/')
     pubnub.publish().channel("TEST").message({"text":"Enter Message Heresss"}).async(publish_callback)
-    pubnub.publish().channel(msg.topic).message(str(msg.payload)).async(publish_callback)
+    pubnub.publish().channel(msg.topic).message(msg.payload).async(publish_callback)
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
