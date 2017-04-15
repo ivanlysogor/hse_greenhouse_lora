@@ -1,6 +1,20 @@
 import paho.mqtt.client as mqtt
 import json
 import redis
+from mosquitto import Mosquitto
+
+publish_key   = "pub-c-2272ef16-05d2-4cfb-927a-7a7c4232145b"
+subscribe_key = "sub-c-b4c7721e-2229-11e7-bd07-02ee2ddab7fe"
+channel_name  = "devices/lora/807B85902000017A/lmt01"
+client_uuid   = "1ddb86ef5"
+
+mqtt_hostname = "mqtt.pubnub.com"
+mqtt_connect  = publish_key + "/" + subscribe_key + "/" + client_uuid
+mqtt_topic    = publish_key + "/" + subscribe_key + "/" + channel_name
+mosq_object   = Mosquitto(mqtt_connect)
+
+mosq_object.connect(mqtt_hostname)
+
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -15,6 +29,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
     r.append(msg.topic,str(msg.payload)+'/')
+    mosq_object.publish( mqtt_topic, msg.payload)
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
