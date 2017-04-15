@@ -39,6 +39,9 @@ client.on_message = on_message
 
 client.connect("localhost", 1883, 60)
 
+mosq_object = mqtt.Client()
+mosq_object.connect(mqtt_hostname, 1883, 60)
+
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
 # Other loop*() functions are available that give a threaded interface and a
