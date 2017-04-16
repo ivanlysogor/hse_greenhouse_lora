@@ -3,6 +3,7 @@ import json
 import redis
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
+
  
 pnconfig = PNConfiguration()
 pnconfig.subscribe_key = "sub-c-a2885d3a-222d-11e7-b284-02ee2ddab7fe"
@@ -10,6 +11,39 @@ pnconfig.publish_key = "pub-c-aa6a2b58-13a0-4b05-abce-20cf4cc4f251"
 pnconfig.ssl = False
  
 pubnub = PubNub(pnconfig)
+
+# -----
+
+from __future__ import print_function
+import paho.mqtt.publish as publish
+import psutil
+
+channelID = "258976"
+
+apiKey = "1QKSDZUC932F8NAX"
+useUnsecuredTCP = False
+useUnsecuredWebsockets = False
+useSSLWebsockets = True
+mqttHost = "mqtt.thingspeak.com"
+
+if useUnsecuredTCP:
+    tTransport = "tcp"
+    tPort = 1883
+    tTLS = None
+
+if useUnsecuredWebsockets:
+    tTransport = "websockets"
+    tPort = 80
+    tTLS = None
+
+if useSSLWebsockets:
+    import ssl
+    tTransport = "websockets"
+    tTLS = {'ca_certs':"/etc/ssl/certs/ca-certificates.crt",'tls_version':ssl.PROTOCOL_TLSv1}
+    tPort = 443
+        
+# Create the topic string
+topic = "channels/" + channelID + "/publish/" + apiKey
 
 def publish_callback(result, status):
     print "status.is_error", status.is_error()
@@ -34,6 +68,8 @@ def on_message(client, userdata, msg):
     print datajson['data']
     pubnub.publish().channel(msg.topic).message({"text":"Enter Message Heresss"}).async(publish_callback)
     pubnub.publish().channel(msg.topic).message(datajson['data']).async(publish_callback)
+    publish.single(msg.topic, payload=datajson['data'], hostname=mqttHost, port=tPort, tls=tTLS, transport=tTransport)
+
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
