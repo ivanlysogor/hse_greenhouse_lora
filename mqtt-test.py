@@ -65,9 +65,8 @@ def on_message(client, userdata, msg):
     r.append(msg.topic,str(msg.payload)+'/')
     datajson=json.loads(str(msg.payload))
     print datajson['data']
-    pubnub.publish().channel(msg.topic).message({"text":"Enter Message Heresss"}).async(publish_callback)
     pubnub.publish().channel(msg.topic).message(datajson['data']).async(publish_callback)
-    publish.single(msg.topic, payload=datajson['data'], hostname=mqttHost, port=tPort, tls=tTLS, transport=tTransport)
+    publish.single(msg.topic, payload=str(msg.payload), hostname=mqttHost, port=tPort, tls=tTLS, transport=tTransport)
 
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
