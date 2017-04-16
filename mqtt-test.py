@@ -28,7 +28,7 @@ try:
 	appCli = ibmiotf.application.Client(appOptions)
 except Exception as e:
 	print(str(e))
-	sys.exit()
+
 
 # Connect and configuration the application
 # - subscribe to live data from the device we created, specifically to "greeting" events
