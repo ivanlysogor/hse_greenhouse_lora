@@ -8,6 +8,27 @@ import time
 import sys
 import pprint
 import uuid
+
+try:
+	import ibmiotf.application
+	import ibmiotf.device
+except ImportError:
+	# This part is only required to run the sample from within the samples
+	# directory when the module itself is not installed.
+	#
+	# If you have the module installed, just use "import ibmiotf.application" & "import ibmiotf.device"
+	import os
+	import inspect
+	cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"../../src")))
+	if cmd_subfolder not in sys.path:
+		sys.path.insert(0, cmd_subfolder)
+	import ibmiotf.application
+	import ibmiotf.device
+
+
+def myAppEventCallback(event):
+	print("Received live data from %s (%s) sent at %s: hello=%s x=%s" % (event.deviceId, event.deviceType, event.timestamp.strftime("%H:%M:%S"), data['hello'], data['x']))
+
  
 pnconfig = PNConfiguration()
 pnconfig.subscribe_key = "sub-c-a2885d3a-222d-11e7-b284-02ee2ddab7fe"
