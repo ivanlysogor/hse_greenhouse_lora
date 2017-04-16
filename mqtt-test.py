@@ -45,7 +45,7 @@ deviceType = "LORA"
 deviceId = "LMT01"
 appId = deviceId + "_receiver"
 authMethod = "token"
-authToken = "Rs3iJV)Q3zgZb+tu7)"
+authToken = "Rv8xQ4YVF*6V9nfRdQ"
 
 # Initialize the application client.
 try:
