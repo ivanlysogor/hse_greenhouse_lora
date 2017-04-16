@@ -14,35 +14,40 @@ pubnub = PubNub(pnconfig)
 
 # -----
 
-# from __future__ import print_function
-import paho.mqtt.publish as publish
 
-channelID = "258976"
+organization = "tulocj"
+deviceType = "LORA"
+deviceId = "LMT01"
+appId = deviceId + "_receiver"
+authMethod = "token"
+authToken = "Rs3iJV)Q3zgZb+tu7)"
 
-apiKey = "1QKSDZUC932F8NAX"
-useUnsecuredTCP = True
-useUnsecuredWebsockets = False
-useSSLWebsockets = False
-mqttHost = "mqtt.thingspeak.com"
+# Initialize the application client.
+try:
+	appOptions = {"org": organization, "id": appId, "auth-method": authMethod, "auth-token": authToken}
+	appCli = ibmiotf.application.Client(appOptions)
+except Exception as e:
+	print(str(e))
+	sys.exit()
 
-if useUnsecuredTCP:
-    tTransport = "tcp"
-    tPort = 1883
-    tTLS = None
+# Connect and configuration the application
+# - subscribe to live data from the device we created, specifically to "greeting" events
+# - use the myAppEventCallback method to process events
+appCli.connect()
+appCli.subscribeToDeviceEvents(deviceType, deviceId, "greeting")
+appCli.deviceEventCallback = myAppEventCallback
 
-if useUnsecuredWebsockets:
-    tTransport = "websockets"
-    tPort = 80
-    tTLS = None
+# Initialize the device client.
+try:
+	deviceOptions = {"org": organization, "type": deviceType, "id": deviceId, "auth-method": authMethod, "auth-token": authToken}
+	deviceCli = ibmiotf.device.Client(deviceOptions)
+except Exception as e:
+	print("Caught exception connecting device: %s" % str(e))
+	sys.exit()
 
-if useSSLWebsockets:
-    import ssl
-    tTransport = "websockets"
-    tTLS = {'ca_certs':"/etc/ssl/certs/ca-certificates.crt",'tls_version':ssl.PROTOCOL_TLSv1}
-    tPort = 443
-        
-# Create the topic string
-topic = "channels/" + channelID + "/publish/" + apiKey
+# Connect and send a datapoint "hello" with value "world" into the cloud as an event of type "greeting" 10 times
+deviceCli.connect()
+
 
 def publish_callback(result, status):
     print "status.is_error", status.is_error()
@@ -66,8 +71,12 @@ def on_message(client, userdata, msg):
     datajson=json.loads(str(msg.payload))
     print datajson['data']
     pubnub.publish().channel(msg.topic).message(datajson['data']).async(publish_callback)
-    publish.single(topic, payload='s1=10', hostname=mqttHost, port=tPort, tls=tTLS, transport=tTransport)
-
+    def myOnPublishCallback():
+		print("Confirmed event %s received by IoTF\n" % x)
+	
+	success = deviceCli.publishEvent("test subj", "json", "test body", qos=0, on_publish=myOnPublishCallback)
+	if not success:
+		print("Not connected to IoTF")
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
