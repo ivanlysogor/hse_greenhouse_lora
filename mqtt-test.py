@@ -59,7 +59,6 @@ except Exception as e:
 # - subscribe to live data from the device we created, specifically to "greeting" events
 # - use the myAppEventCallback method to process events
 appCli.connect()
-appCli.subscribeToDeviceEvents(deviceType, deviceId, "greeting")
 appCli.deviceEventCallback = myAppEventCallback
 
 # Initialize the device client.
