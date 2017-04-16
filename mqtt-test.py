@@ -20,9 +20,9 @@ import paho.mqtt.publish as publish
 channelID = "258976"
 
 apiKey = "1QKSDZUC932F8NAX"
-useUnsecuredTCP = False
+useUnsecuredTCP = True
 useUnsecuredWebsockets = False
-useSSLWebsockets = True
+useSSLWebsockets = False
 mqttHost = "mqtt.thingspeak.com"
 
 if useUnsecuredTCP:
