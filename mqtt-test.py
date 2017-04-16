@@ -58,8 +58,6 @@ except Exception as e:
 # Connect and configuration the application
 # - subscribe to live data from the device we created, specifically to "greeting" events
 # - use the myAppEventCallback method to process events
-appCli.connect()
-appCli.deviceEventCallback = myAppEventCallback
 
 # Initialize the device client.
 try:
@@ -71,7 +69,6 @@ except Exception as e:
 
 # Connect and send a datapoint "hello" with value "world" into the cloud as an event of type "greeting" 10 times
 deviceCli.connect()
-
 
 def publish_callback(result, status):
     print "status.is_error", status.is_error()
@@ -99,7 +96,7 @@ def on_message(client, userdata, msg):
     datajson=json.loads(str(msg.payload))
     print datajson['data']
     pubnub.publish().channel(msg.topic).message(datajson['data']).async(publish_callback)
-
+    
     success = deviceCli.publishEvent("test subj", "json", "test body", qos=0, on_publish=myOnPublishCallback)
     if not success:
         print("Not connected to IoTF")
