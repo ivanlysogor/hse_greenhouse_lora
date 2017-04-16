@@ -66,7 +66,7 @@ def on_message(client, userdata, msg):
     datajson=json.loads(str(msg.payload))
     print datajson['data']
     pubnub.publish().channel(msg.topic).message(datajson['data']).async(publish_callback)
-    publish.single(msg.topic, payload='{"s1":"14"}', hostname=mqttHost, port=tPort, tls=tTLS, transport=tTransport)
+    publish.single(topic, payload='{"s1":"14"}', hostname=mqttHost, port=tPort, tls=tTLS, transport=tTransport)
 
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
