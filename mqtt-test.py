@@ -72,11 +72,11 @@ def on_message(client, userdata, msg):
     print datajson['data']
     pubnub.publish().channel(msg.topic).message(datajson['data']).async(publish_callback)
     def myOnPublishCallback():
-		print("Confirmed event %s received by IoTF\n" % x)
-	
-	success = deviceCli.publishEvent("test subj", "json", "test body", qos=0, on_publish=myOnPublishCallback)
-	if not success:
-		print("Not connected to IoTF")
+        print("Confirmed event %s received by IoTF\n" % x)
+
+    success = deviceCli.publishEvent("test subj", "json", "test body", qos=0, on_publish=myOnPublishCallback)
+    if not success:
+        print("Not connected to IoTF")
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
