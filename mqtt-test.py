@@ -97,7 +97,7 @@ def on_message(client, userdata, msg):
     print datajson['data']
     pubnub.publish().channel(msg.topic).message(datajson['data']).async(publish_callback)
     
-    success = deviceCli.publishEvent("test subj", "json", "test body", qos=0, on_publish=myOnPublishCallback)
+    success = deviceCli.publishEvent(msg.topic, "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
     if not success:
         print("Not connected to IoTF")
 
