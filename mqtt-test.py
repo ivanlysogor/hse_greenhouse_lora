@@ -16,7 +16,6 @@ pubnub = PubNub(pnconfig)
 
 # from __future__ import print_function
 import paho.mqtt.publish as publish
-import psutil
 
 channelID = "258976"
 
