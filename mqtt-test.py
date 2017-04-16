@@ -64,6 +64,10 @@ def on_connect(client, userdata, flags, rc):
     # client.subscribe("$SYS/#")
     client.subscribe("devices/lora/#")
 
+def myOnPublishCallback():
+    print("Confirmed event %s received by IoTF\n" % x)
+
+
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
@@ -71,8 +75,6 @@ def on_message(client, userdata, msg):
     datajson=json.loads(str(msg.payload))
     print datajson['data']
     pubnub.publish().channel(msg.topic).message(datajson['data']).async(publish_callback)
-    def myOnPublishCallback():
-        print("Confirmed event %s received by IoTF\n" % x)
 
     success = deviceCli.publishEvent("test subj", "json", "test body", qos=0, on_publish=myOnPublishCallback)
     if not success:
