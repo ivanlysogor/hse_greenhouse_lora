@@ -95,7 +95,7 @@ def on_message(client, userdata, msg):
     print datajson['data']
     
     # -----  sent to remote_redis
-    r.append(msg.topic,str(msg.payload)+'/')
+    r_remote.append(msg.topic,str(msg.payload)+'/')
 
     # ----- send to IBM Watson
     success = deviceCli.publishEvent("data", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
