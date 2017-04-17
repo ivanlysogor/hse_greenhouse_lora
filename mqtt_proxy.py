@@ -91,11 +91,15 @@ def on_message(client, userdata, msg):
     
     # ----- send to local Redis
     r.append(msg.topic,str(msg.payload)+'/')
-    datajson=json.loads(str(msg.payload))
-    print datajson['data']
+    
     
     # -----  sent to remote_redis
-    r_remote.publish(msg.topic,str(msg.payload))
+    if msg.topic.find("bme280")>0:
+        datajson=json.loads(str(msg.payload))
+        print datajson['data']
+        r_remote.publish(msg.topic+"/temperature",datajson['data']['temperature'])
+        r_remote.publish(msg.topic+"/humidity",datajson['data']['humidity'])
+        r_remote.publish(msg.topic+"/pressure",datajson['data']['pressure'])
 
     # ----- send to IBM Watson
     success = deviceCli.publishEvent("data", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
