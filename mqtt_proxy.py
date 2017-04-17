@@ -89,22 +89,25 @@ def on_message(client, userdata, msg):
     #  ----  Debug received event
     print(msg.topic+" "+str(msg.payload))
     
+    # ----- JSON Convert
+    datajson=json.loads(str(msg.payload))
+    print datajson['data']
+        
     # ----- send to local Redis
     r.append(msg.topic,str(msg.payload)+'/')
     
     
     # -----  sent to remote_redis
     if msg.topic.find("bme280")>0:
-        datajson=json.loads(str(msg.payload))
-        print datajson['data']
         r_remote.publish(msg.topic+"/temperature",datajson['data']['temperature'])
         r_remote.publish(msg.topic+"/humidity",datajson['data']['humidity'])
         r_remote.publish(msg.topic+"/pressure",datajson['data']['pressure'])
 
     # ----- send to IBM Watson
-    success = deviceCli.publishEvent("data", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
-    if not success:
-        print("Not connected to IoTF")
+    if msg.topic.find("lmt01")>0:
+        success = deviceCli.publishEvent("data", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
+        if not success:
+            print("Not connected to IoTF")
 
 # ------ Redis local connect
 
