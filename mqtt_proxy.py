@@ -35,12 +35,12 @@ def myAppEventCallback(event):
  
 # ----- IBM Watson config
 
-organization = "tulocj"
-deviceType = "LORA"
-deviceId = "LMT01"
+organization = "22n07e"
+deviceType = "LoRa"
+deviceId = "BMS"
 appId = deviceId + "_receiver"
 authMethod = "token"
-authToken = "Rv8xQ4YVF*6V9nfRdQ"
+authToken = "zsfUlRdc2gRy)1bYV7"
 
 # Initialize the application client.
 try:
