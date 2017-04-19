@@ -104,6 +104,7 @@ def on_message(client, userdata, msg):
         r_remote.publish(msg.topic+"/temperature",datajson['data']['temperature'])
         r_remote.publish(msg.topic+"/humidity",datajson['data']['humidity'])
         r_remote.publish(msg.topic+"/pressure",datajson['data']['pressure'])
+        # ----- send to IBM Watson
         success = deviceCli.publishEvent("bme280", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
         if not success:
             print("Not connected to IoTF")
