@@ -8,6 +8,8 @@ import sys
 import pprint
 import uuid
 
+import struct
+
 # ------ Import IBM libraries
 
 try:
@@ -97,12 +99,15 @@ def on_message(client, userdata, msg):
     r.append(msg.topic,str(msg.payload)+'/')
     
     
-    # -----  sent to remote_redis
+    # -----  sent to remote_redis and IBM
     if msg.topic.find("bme280")>0:
         r_remote.publish(msg.topic+"/temperature",datajson['data']['temperature'])
         r_remote.publish(msg.topic+"/humidity",datajson['data']['humidity'])
         r_remote.publish(msg.topic+"/pressure",datajson['data']['pressure'])
-
+        success = deviceCli.publishEvent("bme280", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
+        if not success:
+            print("Not connected to IoTF")
+            
     # ----- send to IBM Watson
     if msg.topic.find("lmt01")>0:
         success = deviceCli.publishEvent("data", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
