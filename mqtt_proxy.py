@@ -98,7 +98,6 @@ def on_message(client, userdata, msg):
         # ----- send to local Redis
         r.append(msg.topic,str(msg.payload)+'/')
     
-    
         # -----  sent to remote_redis and IBM (humidity, temperature and pressure)
         if msg.topic.find("bme280")>0:
             r_remote.publish(msg.topic+"/temperature",datajson['data']['temperature'])
@@ -128,7 +127,7 @@ def on_message(client, userdata, msg):
             print("Publish data - "+msg.topic+"/adc2: "+datajson['data']['adc2']);
             print("Publish data - "+msg.topic+"/adc3: "+datajson['data']['adc3']);
     except:
-        print "JSON Format Error"       
+        print("Unexpected error:", sys.exc_info()[0])   
 
 # ------ Redis local connect
 
