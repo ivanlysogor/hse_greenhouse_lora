@@ -99,7 +99,7 @@ def on_message(client, userdata, msg):
     r.append(msg.topic,str(msg.payload)+'/')
     
     
-    # -----  sent to remote_redis and IBM
+    # -----  sent to remote_redis and IBM (humidity, temperature and pressure)
     if msg.topic.find("bme280")>0:
         r_remote.publish(msg.topic+"/temperature",datajson['data']['temperature'])
         r_remote.publish(msg.topic+"/humidity",datajson['data']['humidity'])
@@ -108,12 +108,21 @@ def on_message(client, userdata, msg):
         success = deviceCli.publishEvent("bme280", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
         if not success:
             print("Not connected to IoTF")
+
+    # -----  sent to remote_redis luminocity
+    if msg.topic.find("opt3001")>0:
+        r_remote.publish(msg.topic+"/luminocity",datajson['data']['luminocity'])
+        # ----- send to IBM Watson
+        #success = deviceCli.publishEvent("bme280", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
+        # if not success:
+        #    print("Not connected to IoTF")
+
             
     # ----- send to IBM Watson
-    if msg.topic.find("lmt01")>0:
-        success = deviceCli.publishEvent("data", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
-        if not success:
-            print("Not connected to IoTF")
+    # if msg.topic.find("lmt01")>0:
+    #    success = deviceCli.publishEvent("data", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
+    #    if not success:
+    #        print("Not connected to IoTF")
 
 # ------ Redis local connect
 
