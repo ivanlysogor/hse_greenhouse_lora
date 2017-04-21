@@ -103,9 +103,9 @@ def on_message(client, userdata, msg):
             r_remote.publish(msg.topic+"/temperature",datajson['data']['temperature'])
             r_remote.publish(msg.topic+"/humidity",datajson['data']['humidity'])
             r_remote.publish(msg.topic+"/pressure",datajson['data']['pressure'])
-            # print("Publish data - "+msg.topic+"/pressure: "+datajson['data']['pressure']);
-            # print("Publish data - "+msg.topic+"/humidity: "+datajson['data']['humidity']);
-            # print("Publish data - "+msg.topic+"/pressure: "+datajson['data']['pressure']);
+            print("Publish data - "+msg.topic+"/pressure: "+str(datajson['data']['pressure']));
+            print("Publish data - "+msg.topic+"/humidity: "+str(datajson['data']['humidity']));
+            print("Publish data - "+msg.topic+"/pressure: "+str(datajson['data']['pressure']));
             # ----- send to IBM Watson
             # success = deviceCli.publishEvent("bme280", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
             # if not success:
@@ -124,8 +124,8 @@ def on_message(client, userdata, msg):
         if msg.topic.find("adc")>0:
             r_remote.publish(msg.topic+"/adc2",datajson['data']['adc2'])
             r_remote.publish(msg.topic+"/adc3",datajson['data']['adc3'])
-            # print("Publish data - "+msg.topic+"/adc2: "+datajson['data']['adc2']);
-            # print("Publish data - "+msg.topic+"/adc3: "+datajson['data']['adc3']);
+            print("Publish data - "+msg.topic+"/adc2: "+str(datajson['data']['adc2']));
+            print("Publish data - "+msg.topic+"/adc3: "+str(datajson['data']['adc3']));
     except:
         print("Unexpected error:", sys.exc_info()[0])   
 
