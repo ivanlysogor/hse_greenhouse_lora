@@ -114,7 +114,7 @@ def on_message(client, userdata, msg):
         # -----  sent to remote_redis luminocity
         if msg.topic.find("opt3001")>0:
             r_remote.publish(msg.topic+"/luminocity",datajson['data']['luminocity'])
-            # print("Publish data - "+msg.topic+"/luminocity: "+datajson['data']['luminocity']);
+            print("Publish data - "+msg.topic+"/luminocity: "+str(datajson['data']['luminocity']));
             # ----- send to IBM Watson
             # success = deviceCli.publishEvent("bme280", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
             # if not success:
