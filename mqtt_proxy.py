@@ -103,7 +103,7 @@ def on_message(client, userdata, msg):
             r_remote.publish(msg.topic+"/temperature",datajson['data']['temperature'])
             r_remote.publish(msg.topic+"/humidity",datajson['data']['humidity'])
             r_remote.publish(msg.topic+"/pressure",datajson['data']['pressure'])
-            print("Publish data - "+msg.topic+"/pressure: "+str(datajson['data']['pressure']));
+            print("Publish data - "+msg.topic+"/temperature: "+str(datajson['data']['temperature']));
             print("Publish data - "+msg.topic+"/humidity: "+str(datajson['data']['humidity']));
             print("Publish data - "+msg.topic+"/pressure: "+str(datajson['data']['pressure']));
             # ----- send to IBM Watson
