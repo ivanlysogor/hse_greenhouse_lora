@@ -35,19 +35,19 @@ def myAppEventCallback(event):
  
 # ----- IBM Watson config
 
-organization = "22n07e"
-deviceType = "LoRa"
-deviceId = "BMS"
-appId = deviceId + "_receiver"
-authMethod = "token"
-authToken = "zsfUlRdc2gRy)1bYV7"
+# organization = "22n07e"
+# deviceType = "LoRa"
+# deviceId = "BMS"
+# appId = deviceId + "_receiver"
+# authMethod = "token"
+# authToken = "zsfUlRdc2gRy)1bYV7"
 
 # Initialize the application client.
-try:
-	appOptions = {"org": organization, "id": appId, "auth-method": authMethod, "auth-token": authToken}
-	appCli = ibmiotf.application.Client(appOptions)
-except Exception as e:
-	print(str(e))
+# try:
+#	appOptions = {"org": organization, "id": appId, "auth-method": authMethod, "auth-token": authToken}
+#	appCli = ibmiotf.application.Client(appOptions)
+# except Exception as e:
+#	print(str(e))
 
 
 # Connect and configuration the application
@@ -89,51 +89,46 @@ def myOnPublishCallback():
 def on_message(client, userdata, msg):
     
     #  ----  Debug received event
-    print(msg.topic+" "+str(msg.payload))
+    print("Message received: "+msg.topic+" "+str(msg.payload))
     
     # ----- JSON Convert
     try:
         datajson=json.loads(str(msg.payload))
-        print datajson['data']
+
+        # ----- send to local Redis
+        r.append(msg.topic,str(msg.payload)+'/')
+    
+    
+        # -----  sent to remote_redis and IBM (humidity, temperature and pressure)
+        if msg.topic.find("bme280")>0:
+            r_remote.publish(msg.topic+"/temperature",datajson['data']['temperature'])
+            r_remote.publish(msg.topic+"/humidity",datajson['data']['humidity'])
+            r_remote.publish(msg.topic+"/pressure",datajson['data']['pressure'])
+            print("Publish data - "+msg.topic+"/pressure: "+datajson['data']['pressure']);
+            print("Publish data - "+msg.topic+"/humidity: "+datajson['data']['humidity']);
+            print("Publish data - "+msg.topic+"/pressure: "+datajson['data']['pressure']);
+            # ----- send to IBM Watson
+            # success = deviceCli.publishEvent("bme280", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
+            # if not success:
+            #    print("Not connected to IoTF")
+
+        # -----  sent to remote_redis luminocity
+        if msg.topic.find("opt3001")>0:
+            r_remote.publish(msg.topic+"/luminocity",datajson['data']['luminocity'])
+            print("Publish data - "+msg.topic+"/luminocity: "+datajson['data']['luminocity']);
+            # ----- send to IBM Watson
+            # success = deviceCli.publishEvent("bme280", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
+            # if not success:
+            #    print("Not connected to IoTF")
+
+        # -----  sent to remote_redis soil data
+        if msg.topic.find("adc")>0:
+            r_remote.publish(msg.topic+"/adc2",datajson['data']['adc2'])
+            r_remote.publish(msg.topic+"/adc3",datajson['data']['adc3'])
+            print("Publish data - "+msg.topic+"/adc2: "+datajson['data']['adc2']);
+            print("Publish data - "+msg.topic+"/adc3: "+datajson['data']['adc3']);
     except:
-            
-    # ----- send to local Redis
-    r.append(msg.topic,str(msg.payload)+'/')
-    
-    
-    # -----  sent to remote_redis and IBM (humidity, temperature and pressure)
-    if msg.topic.find("bme280")>0:
-        r_remote.publish(msg.topic+"/temperature",datajson['data']['temperature'])
-        r_remote.publish(msg.topic+"/humidity",datajson['data']['humidity'])
-        r_remote.publish(msg.topic+"/pressure",datajson['data']['pressure'])
-        # ----- send to IBM Watson
-        success = deviceCli.publishEvent("bme280", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
-        if not success:
-            print("Not connected to IoTF")
-
-    # -----  sent to remote_redis luminocity
-    if msg.topic.find("opt3001")>0:
-        r_remote.publish(msg.topic+"/luminocity",datajson['data']['luminocity'])
-        # ----- send to IBM Watson
-        #success = deviceCli.publishEvent("bme280", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
-        # if not success:
-        #    print("Not connected to IoTF")
-
-   # -----  sent to remote_redis soil data
-    if msg.topic.find("adc")>0:
-        r_remote.publish(msg.topic+"/adc2",datajson['data']['adc2'])
-        r_remote.publish(msg.topic+"/adc3",datajson['data']['adc3'])
-        # ----- send to IBM Watson
-        #success = deviceCli.publishEvent("bme280", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
-        # if not success:
-        #    print("Not connected to IoTF")
-
-            
-    # ----- send to IBM Watson
-    # if msg.topic.find("lmt01")>0:
-    #    success = deviceCli.publishEvent("data", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
-    #    if not success:
-    #        print("Not connected to IoTF")
+        print "JSON Format Error"       
 
 # ------ Redis local connect
 
