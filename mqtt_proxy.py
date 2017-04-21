@@ -55,15 +55,15 @@ except Exception as e:
 # - use the myAppEventCallback method to process events
 
 # Initialize the device client.
-try:
-	deviceOptions = {"org": organization, "type": deviceType, "id": deviceId, "auth-method": authMethod, "auth-token": authToken}
-	deviceCli = ibmiotf.device.Client(deviceOptions)
-except Exception as e:
-	print("Caught exception connecting device: %s" % str(e))
-	sys.exit()
+# try:
+#	deviceOptions = {"org": organization, "type": deviceType, "id": deviceId, "auth-method": authMethod, "auth-token": authToken}
+#	deviceCli = ibmiotf.device.Client(deviceOptions)
+# except Exception as e:
+#	print("Caught exception connecting device: %s" % str(e))
+#	sys.exit()
 
 # Connect and send a datapoint "hello" with value "world" into the cloud as an event of type "greeting" 10 times
-deviceCli.connect()
+# deviceCli.connect()
 
 def publish_callback(result, status):
     print "status.is_error", status.is_error()
@@ -92,9 +92,11 @@ def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
     
     # ----- JSON Convert
-    datajson=json.loads(str(msg.payload))
-    print datajson['data']
-        
+    try:
+        datajson=json.loads(str(msg.payload))
+        print datajson['data']
+    except:
+            
     # ----- send to local Redis
     r.append(msg.topic,str(msg.payload)+'/')
     
@@ -112,6 +114,15 @@ def on_message(client, userdata, msg):
     # -----  sent to remote_redis luminocity
     if msg.topic.find("opt3001")>0:
         r_remote.publish(msg.topic+"/luminocity",datajson['data']['luminocity'])
+        # ----- send to IBM Watson
+        #success = deviceCli.publishEvent("bme280", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
+        # if not success:
+        #    print("Not connected to IoTF")
+
+   # -----  sent to remote_redis soil data
+    if msg.topic.find("adc")>0:
+        r_remote.publish(msg.topic+"/adc2",datajson['data']['adc2'])
+        r_remote.publish(msg.topic+"/adc3",datajson['data']['adc3'])
         # ----- send to IBM Watson
         #success = deviceCli.publishEvent("bme280", "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
         # if not success:
