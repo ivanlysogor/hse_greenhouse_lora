@@ -2,6 +2,7 @@ import paho.mqtt.client as mqtt
 import json
 import redis
 
+
 import time
 import sys
 import pprint
@@ -9,44 +10,44 @@ import uuid
 
 import struct
 
-# ----- IBM Watson config
-
-organization = "22n07e"
-deviceType = "LoRa"
-deviceId = "BMS"
-appId = deviceId + "_receiver"
-authMethod = "token"
-authToken = "zsfUlRdc2gRy)1bYV7"
-
 # ------ Import IBM libraries
 
 try:
-	import ibmiotf.application
-	import ibmiotf.device
+    import ibmiotf.application
+    import ibmiotf.device
 except ImportError:
-	# This part is only required to run the sample from within the samples
-	# directory when the module itself is not installed.
-	#
-	# If you have the module installed, just use "import ibmiotf.application" & "import ibmiotf.device"
-	import os
-	import inspect
-	cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"../../src")))
-	if cmd_subfolder not in sys.path:
-		sys.path.insert(0, cmd_subfolder)
-	import ibmiotf.application
-	import ibmiotf.device
+    # This part is only required to run the sample from within the samples
+    # directory when the module itself is not installed.
+    #
+    # If you have the module installed, just use "import ibmiotf.application" & "import ibmiotf.device"
+    import os
+    import inspect
+    cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"../../src")))
+    if cmd_subfolder not in sys.path:
+        sys.path.insert(0, cmd_subfolder)
+    import ibmiotf.application
+    import ibmiotf.device
 
 
 def myAppEventCallback(event):
-	print("Received live data from %s (%s) sent at %s: hello=%s x=%s" % (event.deviceId, event.deviceType, event.timestamp.strftime("%H:%M:%S"), data['hello'], data['x']))
+    print("Received live data from %s (%s) sent at %s: hello=%s x=%s" % (event.deviceId, event.deviceType, event.timestamp.strftime("%H:%M:%S"), data['hello'], data['x']))
 
+ 
+# ----- IBM Watson config
 
-# Initialize the application client.
+organization = "st837g"
+deviceType = "bme280"
+deviceId = "bme280_1"
+appId = deviceId + "_receiver"
+authMethod = "token"
+authToken = "YQTrQRoBCPm!jXmj(B"
+
+# ------ Initialize the application client.
 try:
-	appOptions = {"org": organization, "id": appId, "auth-method": authMethod, "auth-token": authToken}
-	appCli = ibmiotf.application.Client(appOptions)
+    appOptions = {"org": organization, "id": appId, "auth-method": authMethod, "auth-token": authToken}
+    appCli = ibmiotf.application.Client(appOptions)
 except Exception as e:
-	print(str(e))
+    print(str(e))
 
 
 # Connect and configuration the application
@@ -55,11 +56,11 @@ except Exception as e:
 
 # Initialize the device client.
 try:
-	deviceOptions = {"org": organization, "type": deviceType, "id": deviceId, "auth-method": authMethod, "auth-token": authToken}
-	deviceCli = ibmiotf.device.Client(deviceOptions)
+    deviceOptions = {"org": organization, "type": deviceType, "id": deviceId, "auth-method": authMethod, "auth-token": authToken}
+    deviceCli = ibmiotf.device.Client(deviceOptions)
 except Exception as e:
-	print("Caught exception connecting device: %s" % str(e))
-	sys.exit()
+    print("Caught exception connecting device: %s" % str(e))
+    sys.exit()
 
 # Connect and send a datapoint "hello" with value "world" into the cloud as an event of type "greeting" 10 times
 deviceCli.connect()
@@ -106,11 +107,11 @@ def on_message(client, userdata, msg):
             print("Publish data - "+msg.topic+"/humidity: "+str(datajson['data']['humidity']));
             print("Publish data - "+msg.topic+"/pressure: "+str(datajson['data']['pressure']));
             # ----- send to IBM Watson
-            success = deviceCli.publishEvent(deviceId, "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
+            print("Send to Bluemix - "+str(datajson['data']));
+            success = deviceCli.publishEvent(deviceId, "json", datajson['data'], qos=0, on_publish=myOnPublishCallback);
             if not success:
                 print("Not connected to IoTF")
-            print("Data sent to IBM Bluemix");
-
+            print("Data sent to Bluemix");
         # -----  sent to remote_redis luminocity
         if msg.topic.find("opt3001")>0:
             # r_remote.publish(msg.topic+"/luminocity",datajson['data']['luminocity'])
@@ -119,7 +120,6 @@ def on_message(client, userdata, msg):
             success = deviceCli.publishEvent(deviceId, "json", datajson['data'], qos=0, on_publish=myOnPublishCallback)
             if not success:
                 print("Not connected to IoTF")
-            print("Data sent to IBM Bluemix");
 
         # -----  sent to remote_redis soil data
         if msg.topic.find("adc")>0:
@@ -137,10 +137,10 @@ r = redis.StrictRedis(host='localhost', port=6379, db=0)
 # ------ redis remote
 
 # config = {
-#   'host': 'iotRedis.redis.cache.windows.net',
+#    'host': 'iotRedis.redis.cache.windows.net',
 #    'port': 6379,
 #    'password': "i5hFZUx3D6GTMtA/UcI+P3HFf4O63I/HYbEEa/p/aJU="
-#}
+# }
 
 # r_remote = redis.StrictRedis(**config)
 
@@ -158,3 +158,4 @@ client.connect("localhost", 1883, 60)
 # Other loop*() functions are available that give a threaded interface and a
 # manual interface.
 client.loop_forever()
+
